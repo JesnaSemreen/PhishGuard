@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PhishGuard - Scan Result</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <header>
+    <div class="container navbar">
+
+        <div class="logo">
+            🛡️ PhishGuard
+        </div>
+
+        <div>
+            AI-Based Website Security
+        </div>
+
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeButton">
+            🌙 Dark
+        </button>
+
+    </div>
+</header>
+
+
+    <main>
+
+        <section class="result-section">
+
+            <h1>Scan Result</h1>
+
+            <div class="result-card">
+
+                <p class="result-label">Scanned URL</p>
+
+                <p class="scanned-url">
+                    {{ url }}
+                </p>
+
+
+               <div class="prediction {% if prediction == 'Phishing' %}phishing-result{% else %}legitimate-result{% endif %}">
+    <div class="prediction-icon">
+        {% if prediction == "Phishing" %}
+            ⚠️
+        {% else %}
+            ✅
+        {% endif %}
+    </div>
+
+    <p class="prediction-label">Website Classification</p>
+
+    <h2>{{ prediction }}</h2>
+</div>
+
+
+                
+
+
+                <div class="risk
+    {% if risk == 'High Risk' %}
+        risk-high
+    {% elif risk == 'Medium Risk' %}
+        risk-medium
+    {% else %}
+        risk-low
+    {% endif %}
+">
+    <p>Risk Level</p>
+
+    <h2>
+        {% if risk == "High Risk" %}
+            🔴 {{ risk }}
+        {% elif risk == "Medium Risk" %}
+            🟠 {{ risk }}
+        {% else %}
+            🟢 {{ risk }}
+        {% endif %}
+    </h2>
+</div>
+
+    <div class="probability">
+    <p>Phishing Probability</p>
+
+    <h2>{{ phishing_probability }}%</h2>
+
+    <div class="risk-bar">
+        <div
+    class="risk-fill
+        {% if phishing_probability|float < 30 %}
+            risk-fill-low
+        {% elif phishing_probability|float < 70 %}
+            risk-fill-medium
+        {% else %}
+            risk-fill-high
+        {% endif %}"
+    style="width: {{ phishing_probability }}%;">
+</div>
+    </div>
+
+    <div class="risk-scale">
+        <span>0%</span>
+        <span>50%</span>
+        <span>100%</span>
+    </div>
+</div>
+                <div class="recommendation">
+                    <h3>🛡️ Security Recommendation</h3>
+                    <p>{{ recommendation }}</p>
+                </div>
+                <div class="features-explanation">
+                <div class="why-flagged">
+    {% if prediction == "Phishing" %}
+    <h3>🔎 Why Was This URL Flagged?</h3>
+{% else %}
+    <h3>🔎 Why Does This URL Appear Legitimate?</h3>
+{% endif %}
+
+    <ul>
+        {% for reason in reasons %}
+            <li>{{ reason }}</li>
+        {% endfor %}
+    </ul>
+</div>  
+
+    
+    <h2 class="features-title">🔎 URL Features Analyzed</h2>
+    <div class="feature-list">
+
+        <div class="feature-item">
+            <span>URL Length</span>
+            <strong>{{ features["URLLength"] }}</strong>
+        </div>
+
+        <div class="feature-item">
+            <span>Domain Length</span>
+            <strong>{{ features["DomainLength"] }}</strong>
+        </div>
+
+        <div class="feature-item">
+            <span>Uses IP Address</span>
+            <strong>{{ "Yes" if features["IsDomainIP"] == 1 else "No" }}</strong>
+        </div>
+
+        <div class="feature-item">
+            <span>Subdomains</span>
+            <strong>{{ features["NoOfSubDomain"] }}</strong>
+        </div>
+
+        <div class="feature-item">
+            <span>HTTPS</span>
+            <strong>{{ "Yes" if features["IsHTTPS"] == 1 else "No" }}</strong>
+        </div>
+
+        <div class="feature-item">
+            <span>Letters in URL</span>
+            <strong>{{ features["NoOfLettersInURL"] }}</strong>
+        </div>
+
+        <div class="feature-item">
+            <span>Digits in URL</span>
+            <strong>{{ features["NoOfDegitsInURL"] }}</strong>
+        </div>
+
+        <div class="feature-item">
+            <span>Special Characters</span>
+            <strong>{{ features["NoOfOtherSpecialCharsInURL"] }}</strong>
+        </div>
+
+    </div>
+
+</div>
+
+                <a href="/" class="scan-again">
+                    🔍 Scan Another URL
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>
+            © 2026 PhishGuard | AI-Based Phishing Website Detection
+        </p>
+
+    </footer>
+<script>
+    function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+
+        const isDark = document.body.classList.contains("dark-mode");
+
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        updateThemeButton();
+    }
+
+    function updateThemeButton() {
+        const button = document.getElementById("themeButton");
+
+        if (document.body.classList.contains("dark-mode")) {
+            button.textContent = "☀️ Light";
+        } else {
+            button.textContent = "🌙 Dark";
+        }
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+
+        const savedTheme = localStorage.getItem("theme");
+
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-mode");
+        }
+
+        updateThemeButton();
+    });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PhishGuard - AI Phishing Detection</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header>
+    <div class="container navbar">
+
+        <div class="logo">
+            🛡️ PhishGuard
+        </div>
+
+        <div>
+            AI-Based Website Security
+        </div>
+
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeButton">
+            🌙 Dark
+        </button>
+
+    </div>
+</header>
+
+    <!-- Main Section -->
+    <main>
+
+        <section class="hero">
+            <div class="security-badge">
+    🛡️ AI-Powered URL Security Scanner
+</div>
+            <h1>Detect Phishing Websites <br> Before They Detect You</h1>
+
+            <p>
+                Analyze website URLs using AI and machine learning
+    to identify potential phishing threats.
+            </p>
+
+
+            <!-- URL Scan Box -->
+            <div class="scan-box">
+
+                <form method="POST" action="/scan">
+                    {% if error %}
+    <p class="error-message">{{ error }}</p>
+{% endif %}
+    <input
+        type="text"
+        name="url"
+        class="url-input"
+        placeholder="Enter website URL (e.g. https://example.com)"
+        required
+    >
+
+    <button type="submit" class="scan-button">
+        🔍 Scan Website
+    </button>
+
+</form>
+
+            </div>
+
+
+            <!-- Features -->
+            <div class="features">
+
+                <div class="feature-card">
+                    <h3>🤖 AI Analysis</h3>
+                    <p>
+                        Machine learning analyzes website
+                        characteristics to identify suspicious URLs.
+                    </p>
+                </div>
+
+
+                <div class="feature-card">
+                    <h3>🛡️ Risk Detection</h3>
+                    <p>
+                        Get a risk classification such as
+                        Low, Medium, or High.
+                    </p>
+                </div>
+
+
+                <div class="feature-card">
+                    <h3>📊 Detailed Results</h3>
+                    <p>
+                        Understand why a website was classified
+                        as potentially dangerous.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            © 2026 PhishGuard | AI-Based Phishing Website Detection
+        </p>
+
+    </footer>
+<script>
+    function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+
+        const isDark = document.body.classList.contains("dark-mode");
+
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        updateThemeButton();
+    }
+
+    function updateThemeButton() {
+        const button = document.getElementById("themeButton");
+
+        if (document.body.classList.contains("dark-mode")) {
+            button.textContent = "☀️ Light";
+        } else {
+            button.textContent = "🌙 Dark";
+        }
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+
+        const savedTheme = localStorage.getItem("theme");
+
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-mode");
+        }
+
+        updateThemeButton();
+    });
+</script>
+</body>
+
+</html>
