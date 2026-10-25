@@ -1,61 +1,68 @@
-from urllib.parse import urlparse
+
+from urllib.parse import urlparse, urlunparse
+import ipaddress
 
 
 def extract_basic_features(url):
-    parsed_url = urlparse(url)
+    # Safely handle empty or non-string values
+    url = str(url).strip() if url is not None else ""
+
+    # Parse consistently, even if the URL has no scheme
+    candidate = url if "://" in url else "https://" + url
+    parsed = urlparse(candidate)
+
+    hostname = parsed.hostname or ""
+    path = parsed.path or ""
+
+    # Treat an optional root slash consistently
+    if path == "/" and not parsed.query and not parsed.fragment:
+        parsed = parsed._replace(path="")
+        path = ""
+
+    normalized_url = urlunparse(parsed)
+    domain = hostname.lower()
 
     features = {}
 
-    # 1. Total URL length
-    features["URLLength"] = len(url)
-
-    # 2. Domain
-    domain = parsed_url.netloc
-
-    # Remove port if present
-    domain = domain.split(":")[0]
-
-    # 3. Domain length
+    # Existing features
+    features["URLLength"] = len(normalized_url)
     features["DomainLength"] = len(domain)
 
-    # 4. Check whether domain is an IP address
     try:
-        parts = domain.split(".")
-        is_ip = len(parts) == 4 and all(
-            part.isdigit() and 0 <= int(part) <= 255
-            for part in parts
-        )
-    except Exception:
-        is_ip = False
+        ipaddress.ip_address(domain)
+        is_ip = 1
+    except ValueError:
+        is_ip = 0
 
-    features["IsDomainIP"] = int(is_ip)
+    features["IsDomainIP"] = is_ip
 
-    # 5. Number of subdomains
-    domain_parts = domain.split(".")
+    domain_parts = [part for part in domain.split(".") if part]
     features["NoOfSubDomain"] = max(len(domain_parts) - 2, 0)
 
-    # 6. HTTPS
-    features["IsHTTPS"] = int(parsed_url.scheme.lower() == "https")
-
-    # 7. Number of letters in URL
-    features["NoOfLettersInURL"] = sum(char.isalpha() for char in url)
-
-    # 8. Number of digits in URL
-    features["NoOfDegitsInURL"] = sum(char.isdigit() for char in url)
-
-    # 9. Number of '?'
-    features["NoOfQMarkInURL"] = url.count("?")
-
-    # 10. Number of '='
-    features["NoOfEqualsInURL"] = url.count("=")
-
-    # 11. Number of '&'
-    features["NoOfAmpersandInURL"] = url.count("&")
-
-    # 12. Number of special characters
+    features["IsHTTPS"] = int(parsed.scheme.lower() == "https")
+    features["NoOfLettersInURL"] = sum(c.isalpha() for c in normalized_url)
+    features["NoOfDegitsInURL"] = sum(c.isdigit() for c in normalized_url)
+    features["NoOfQMarkInURL"] = normalized_url.count("?")
+    features["NoOfEqualsInURL"] = normalized_url.count("=")
+    features["NoOfAmpersandInURL"] = normalized_url.count("&")
     features["NoOfOtherSpecialCharsInURL"] = sum(
-        not char.isalnum() and char not in "?=&"
-        for char in url
+        not c.isalnum() and c not in "?=&"
+        for c in normalized_url
     )
+
+    # Additional structural features
+    features["HostnameLabelCount"] = len(domain_parts)
+    features["HyphensInHostname"] = domain.count("-")
+    features["DigitsInHostname"] = sum(c.isdigit() for c in domain)
+    features["PathLength"] = len(path)
+    features["QueryLength"] = len(parsed.query)
+    features["FragmentPresent"] = int(bool(parsed.fragment))
+    features["AtSymbolPresent"] = int("@" in parsed.netloc)
+    features["PercentEncodingCount"] = normalized_url.count("%")
+
+    try:
+        features["HasPort"] = int(parsed.port is not None)
+    except ValueError:
+        features["HasPort"] = 0
 
     return features

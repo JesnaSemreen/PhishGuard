@@ -45,6 +45,11 @@ for url in df["URL"]:
 
 X = pd.DataFrame(all_features)
 y = df["label"]
+print("\nLabel counts:")
+print(df["label"].value_counts())
+
+print("\nMean URL features by label:")
+print(X.groupby(y).mean().round(2).to_string())
 
 print("Feature extraction completed!")
 print("Features shape:", X.shape)
