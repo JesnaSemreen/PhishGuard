@@ -44,6 +44,7 @@ for url in df["URL"]:
     all_features.append(extract_basic_features(url))
 
 X = pd.DataFrame(all_features)
+X = X.drop(columns=["IsHTTPS"])
 y = df["label"]
 print("\nLabel counts:")
 print(df["label"].value_counts())

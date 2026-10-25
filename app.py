@@ -56,7 +56,7 @@ def scan():
     print("Extracted Features:", features)
 
     # Convert features into a DataFrame
-    input_data = pd.DataFrame([features])
+    input_data = pd.DataFrame([features]).drop(columns=["IsHTTPS"])
 
     # Make prediction
     prediction = model.predict(input_data)[0]
