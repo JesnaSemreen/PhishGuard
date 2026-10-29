@@ -316,6 +316,51 @@
                 font-size: 12px;
             }
         }
+
+        /* Make email report follow the selected theme */
+
+/* Light theme */
+body:not(.dark-mode) .report-header,
+body:not(.dark-mode) .report-card {
+    background: #ffffff !important;
+    color: #1f2937 !important;
+    border-color: #d1d5db !important;
+}
+
+body:not(.dark-mode) .report-header h1,
+body:not(.dark-mode) .report-card h2,
+body:not(.dark-mode) .report-card .main-score {
+    color: #1f2937 !important;
+}
+
+body:not(.dark-mode) .report-header p,
+body:not(.dark-mode) .report-card p,
+body:not(.dark-mode) .report-card .muted,
+body:not(.dark-mode) .score-label,
+body:not(.dark-mode) .shap-word {
+    color: #4b5563 !important;
+}
+
+body:not(.dark-mode) .report-note {
+    background: #eff6ff !important;
+    color: #1e3a8a !important;
+}
+
+body:not(.dark-mode) .shap-track,
+body:not(.dark-mode) .score-track {
+    background: #e5e7eb;
+}
+
+body:not(.dark-mode) .secondary-action {
+    background: #3478f6 !important;
+    color: #ffffff !important;
+    border-color: #3478f6 !important;
+}
+
+body:not(.dark-mode) .secondary-action:hover {
+    background: #2563eb !important;
+}
+
     </style>
 </head>
 

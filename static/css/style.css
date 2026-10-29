@@ -785,3 +785,68 @@ body:not(.dark-mode) .risk-low {
 .navbar > div:nth-child(2) {
     margin-right: 80px;
 }
+a.scan-again {
+    background: #3478f6;
+    color: white;
+    border: 1px solid #3478f6;
+}
+
+a.scan-again:hover {
+    background: #2563eb;
+    color: white;
+}
+
+/* URL result page action buttons */
+.report-actions {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+}
+
+.report-actions a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 47px;
+    padding: 12px 20px;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none !important;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* Blue Back button */
+.report-actions .primary-action {
+    background: #3478f6;
+    color: #ffffff !important;
+    border: 1px solid #3478f6;
+}
+
+.report-actions .primary-action:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+/* Outlined Scan Another URL button */
+.report-actions .secondary-action {
+    background: transparent;
+    color: #3478f6 !important;
+    border: 1px solid #3478f6;
+}
+
+.report-actions .secondary-action:hover {
+    background: #3478f6;
+    color: #ffffff !important;
+}
+
+/* Mobile layout */
+@media (max-width: 480px) {
+    .report-actions a {
+        width: 100%;
+    }
+}
