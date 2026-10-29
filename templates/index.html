@@ -1,151 +1,500 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>PhishGuard - AI Phishing Detection</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+<style>
+    
+    /* ===== PhishGuard Cybersecurity Dashboard ===== */
+    :root {
+        --pg-bg: #080e1d;
+        --pg-surface: #111b2e;
+        --pg-card: #152238;
+        --pg-border: #293c59;
+        --pg-blue: #3478f6;
+        --pg-cyan: #51d9ff;
+        --pg-text: #edf4ff;
+        --pg-muted: #9aafce;
+    }
+
+    body {
+        background: var(--pg-bg);
+        color: var(--pg-text);
+    }
+
+    .hero {
+        padding-top: 55px;
+        padding-bottom: 45px;
+    }
+
+    .security-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border: 1px solid #2855a0;
+        border-radius: 30px;
+        background: #112448;
+        color: #83bdff;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .hero h1 {
+        margin: 24px auto 16px;
+        max-width: 850px;
+        font-size: clamp(34px, 5vw, 58px);
+        line-height: 1.12;
+        letter-spacing: -1.5px;
+    }
+
+    .hero > p {
+        max-width: 680px;
+        margin: 0 auto 32px;
+        color: var(--pg-muted);
+        font-size: 17px;
+        line-height: 1.8;
+    }
+
+    /* URL / Email toggle */
+    .scanner-switch {
+        display: flex;
+        gap: 8px;
+        width: min(760px, calc(100% - 32px));
+        margin: 0 auto 22px;
+        padding: 6px;
+        box-sizing: border-box;
+        border: 1px solid var(--pg-border);
+        border-radius: 14px;
+        background: var(--pg-surface);
+    }
+
+    .scanner-tab {
+        flex: 1;
+        min-width: 0;
+        padding: 15px 12px;
+        border: 1px solid transparent;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--pg-muted);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .2s, color .2s, border-color .2s;
+    }
+
+    .scanner-tab:hover {
+        color: white;
+        background: #1b2a43;
+    }
+
+    .scanner-tab.active {
+        color: white;
+        background: var(--pg-blue);
+        border-color: #6095ff;
+        box-shadow: 0 4px 18px #3478f630;
+    }
+
+    /* Scanner cards */
+    .scanner-panel {
+        width: min(680px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 32px;
+        box-sizing: border-box;
+        border: 1px solid var(--pg-border);
+        border-radius: 18px;
+        background: linear-gradient(145deg, #19283f, #111c30);
+        box-shadow: 0 18px 45px #00000025;
+    }
+
+    .scanner-panel[hidden] {
+        display: none !important;
+    }
+
+    .scanner-panel.active {
+        display: block;
+        animation: scannerFade .22s ease;
+    }
+
+    .scanner-panel h2 {
+        margin: 0 0 10px;
+        color: var(--pg-text);
+        font-size: 25px;
+        text-align: center;
+    }
+
+    .scanner-description {
+        margin: 0 0 26px;
+        color: var(--pg-muted);
+        line-height: 1.7;
+        text-align: center;
+    }
+
+    .scanner-panel form {
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .scanner-panel form .url-input {
+        flex: 1 1 260px;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding: 15px;
+        border: 1px solid #3a4d69;
+        border-radius: 10px;
+        outline: none;
+        background: #101a2c;
+        color: var(--pg-text);
+        font: inherit;
+        transition: border-color .2s, box-shadow .2s;
+    }
+
+    .scanner-panel form .url-input::placeholder {
+        color: #8da2c0;
+    }
+
+    .scanner-panel form .url-input:focus {
+        border-color: var(--pg-blue);
+        box-shadow: 0 0 0 3px #3478f625;
+    }
+
+    .scanner-panel form textarea.url-input {
+        min-height: 180px;
+        line-height: 1.7;
+        resize: vertical;
+    }
+
+    .scanner-panel form .scan-button {
+        flex: 0 0 auto;
+        width: auto;
+        min-height: 50px;
+        padding: 0 20px;
+        border: 1px solid #4f8cff;
+        border-radius: 10px;
+        background: var(--pg-blue);
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform .2s, background .2s;
+    }
+
+    .scanner-panel form .scan-button:hover {
+        background: #2565df;
+        transform: translateY(-1px);
+    }
+
+    .scanner-note {
+        margin: 20px 0 0;
+        color: var(--pg-muted);
+        font-size: 13px;
+        line-height: 1.8;
+        text-align: center;
+    }
+
+    .error-message {
+        flex-basis: 100%;
+        color: #ff858c;
+    }
+
+    /* Feature cards */
+    .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        width: min(1100px, calc(100% - 32px));
+        margin: 34px auto 0;
+        box-sizing: border-box;
+    }
+
+    .feature-card {
+        padding: 25px 20px;
+        border: 1px solid var(--pg-border);
+        border-radius: 16px;
+        background: var(--pg-surface);
+        transition: transform .2s, border-color .2s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-4px);
+        border-color: #4775b6;
+    }
+
+    .feature-card h3 {
+        margin-top: 0;
+        color: var(--pg-text);
+    }
+
+    .feature-card p {
+        color: var(--pg-muted);
+        line-height: 1.8;
+    }
+
+    footer {
+        margin-top: 30px;
+        border-top: 1px solid var(--pg-border);
+        color: var(--pg-muted);
+    }
+
+    @keyframes scannerFade {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive layout */
+    @media (max-width: 700px) {
+        .hero {
+            padding-top: 35px;
+        }
+
+        .scanner-panel {
+            padding: 23px 18px;
+        }
+
+        .scanner-panel form .url-input,
+        .scanner-panel form .scan-button {
+            flex: 1 1 100%;
+            width: 100%;
+        }
+
+        .features {
+            grid-template-columns: 1fr;
+        }
+
+        .hero h1 {
+            letter-spacing: -0.7px;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .scanner-tab {
+            padding: 13px 5px;
+            font-size: 13px;
+        }
+
+        .scanner-panel h2 {
+            font-size: 21px;
+        }
+    }
+</style>
+
+
+
+
 </head>
 
 <body>
 
-    <!-- Header -->
     <header>
-    <div class="container navbar">
-
-        <div class="logo">
-            🛡️ PhishGuard
+        <div class="container navbar">
+            <div class="logo">🛡️ PhishGuard</div>
+            <div>AI-Based Security</div>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeButton">
+                🌙 Dark
+            </button>
         </div>
+    </header>
 
-        <div>
-            AI-Based Website Security
-        </div>
-
-        <button class="theme-toggle" onclick="toggleTheme()" id="themeButton">
-            🌙 Dark
-        </button>
-
-    </div>
-</header>
-
-    <!-- Main Section -->
     <main>
-
         <section class="hero">
+
             <div class="security-badge">
-    🛡️ AI-Powered URL Security Scanner
-</div>
-            <h1>Detect Phishing Websites <br> Before They Detect You</h1>
-
-            <p>
-                Analyze website URLs using AI and machine learning
-    to identify potential phishing threats.
-            </p>
-
-
-            <!-- URL Scan Box -->
-            <div class="scan-box">
-
-                <form method="POST" action="/scan">
-                    {% if error %}
-    <p class="error-message">{{ error }}</p>
-{% endif %}
-    <input
-        type="text"
-        name="url"
-        class="url-input"
-        placeholder="Enter website URL (e.g. https://example.com)"
-        required
-    >
-
-    <button type="submit" class="scan-button">
-        🔍 Scan Website
-    </button>
-
-</form>
-
+                🛡️ AI-Powered Phishing Protection
             </div>
 
+            <h1>Detect Phishing <br> Before They Detect You</h1>
+
+            <p>
+                Analyze website URLs and suspicious emails using
+                artificial intelligence and machine learning.
+            </p>
+
+            <!-- URL Detection -->
+            
+<!-- Scanner Toggle -->
+<div class="scanner-switch" role="tablist" aria-label="Choose scanner">
+    <button
+        type="button"
+        class="scanner-tab active"
+        id="urlTab"
+        role="tab"
+        aria-selected="true"
+        aria-controls="urlPanel"
+        onclick="switchScanner('url')">
+        🌐 Website URL
+    </button>
+
+    <button
+        type="button"
+        class="scanner-tab"
+        id="emailTab"
+        role="tab"
+        aria-selected="false"
+        aria-controls="emailPanel"
+        onclick="switchScanner('email')">
+        📧 Email Scan
+    </button>
+</div>
+
+<!-- Website Scanner -->
+<div class="scan-box scanner-panel active"
+     id="urlPanel"
+     role="tabpanel"
+     aria-labelledby="urlTab">
+
+    <h2>🌐 Website Detection</h2>
+    <p class="scanner-description">
+        Check a website URL for potential phishing threats.
+    </p>
+
+    <form method="POST" action="/scan">
+        {% if error %}
+            <p class="error-message">{{ error }}</p>
+        {% endif %}
+
+        <input
+            type="text"
+            name="url"
+            class="url-input"
+            placeholder="Enter website URL (e.g. https://example.com)"
+            required>
+
+        <button type="submit" class="scan-button">
+            🔍 Scan Website
+        </button>
+    </form>
+
+    <p class="scanner-note">
+        AI URL analysis · Risk assessment · Security insights
+    </p>
+</div>
+
+<!-- Email Scanner -->
+<div class="scan-box scanner-panel"
+     id="emailPanel"
+     role="tabpanel"
+     aria-labelledby="emailTab"
+     hidden>
+
+    <h2>📧 Email Phishing Detection</h2>
+    <p class="scanner-description">
+        Analyze an email message for suspicious language and phishing signals.
+    </p>
+
+    <form method="POST" action="/scan-email">
+        {% if email_error %}
+            <p class="error-message">{{ email_error }}</p>
+        {% endif %}
+
+        <textarea
+            name="email"
+            class="url-input"
+            rows="7"
+            placeholder="Paste the email subject and message here..."
+            required></textarea>
+
+        <button type="submit" class="scan-button">
+            🛡️ Analyze Email
+        </button>
+    </form>
+
+    <p class="scanner-note">
+        Email AI analysis · SHAP explanations · Security insights
+        <br>
+        Avoid pasting passwords or confidential information.
+    </p>
+</div>
 
             <!-- Features -->
             <div class="features">
-
                 <div class="feature-card">
                     <h3>🤖 AI Analysis</h3>
-                    <p>
-                        Machine learning analyzes website
-                        characteristics to identify suspicious URLs.
-                    </p>
+                    <p>Machine learning analyzes URL and email characteristics.</p>
                 </div>
-
 
                 <div class="feature-card">
                     <h3>🛡️ Risk Detection</h3>
-                    <p>
-                        Get a risk classification such as
-                        Low, Medium, or High.
-                    </p>
+                    <p>Identify potential phishing threats and suspicious messages.</p>
                 </div>
-
 
                 <div class="feature-card">
-                    <h3>📊 Detailed Results</h3>
-                    <p>
-                        Understand why a website was classified
-                        as potentially dangerous.
-                    </p>
+                    <h3>📊 Explainable AI</h3>
+                    <p>View words that influenced the email model's prediction.</p>
                 </div>
-
             </div>
 
         </section>
-
     </main>
 
-
-    <!-- Footer -->
     <footer>
-
-        <p>
-            © 2026 PhishGuard | AI-Based Phishing Website Detection
-        </p>
-
+        <p>© 2026 PhishGuard | AI-Based Phishing Detection</p>
     </footer>
-<script>
-    function toggleTheme() {
-        document.body.classList.toggle("dark-mode");
 
-        const isDark = document.body.classList.contains("dark-mode");
+    <script>
+        
+function switchScanner(mode) {
+    const isUrl = mode === "url";
 
-        localStorage.setItem("theme", isDark ? "dark" : "light");
+    document.getElementById("urlPanel").classList.toggle("active", isUrl);
+    document.getElementById("emailPanel").classList.toggle("active", !isUrl);
 
-        updateThemeButton();
-    }
+    document.getElementById("urlPanel").hidden = !isUrl;
+    document.getElementById("emailPanel").hidden = isUrl;
 
-    function updateThemeButton() {
-        const button = document.getElementById("themeButton");
+    document.getElementById("urlTab").classList.toggle("active", isUrl);
+    document.getElementById("emailTab").classList.toggle("active", !isUrl);
 
-        if (document.body.classList.contains("dark-mode")) {
-            button.textContent = "☀️ Light";
-        } else {
-            button.textContent = "🌙 Dark";
+    document.getElementById("urlTab").setAttribute("aria-selected", isUrl);
+    document.getElementById("emailTab").setAttribute("aria-selected", !isUrl);
+}
+// Open the requested scanner when the page loads
+const urlParams = new URLSearchParams(window.location.search);
+
+if (urlParams.get("scanner") === "email") {
+    switchScanner("email");
+}
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+
+            const isDark = document.body.classList.contains("dark-mode");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+
+            updateThemeButton();
         }
-    }
 
-    window.addEventListener("DOMContentLoaded", function () {
+        function updateThemeButton() {
+            const button = document.getElementById("themeButton");
 
-        const savedTheme = localStorage.getItem("theme");
-
-        if (savedTheme === "dark") {
-            document.body.classList.add("dark-mode");
+            button.textContent =
+                document.body.classList.contains("dark-mode")
+                ? "☀️ Light"
+                : "🌙 Dark";
         }
 
-        updateThemeButton();
-    });
-</script>
+        window.addEventListener("DOMContentLoaded", function () {
+            if (localStorage.getItem("theme") === "dark") {
+                document.body.classList.add("dark-mode");
+            }
+
+            updateThemeButton();
+        });
+    </script>
+
 </body>
-
 </html>

@@ -1,0 +1,494 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishGuard | Email Security Report</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .email-report {
+            width: min(900px, calc(100% - 32px));
+            margin: 40px auto 60px;
+            color: #e8eefb;
+        }
+
+        
+.report-header {
+    text-align: left;
+    margin-bottom: 30px;
+    padding: 28px 30px;
+    border: 1px solid #293c59;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #172740, #101a2d);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.report-header h1 {
+    font-size: clamp(30px, 4vw, 42px);
+    margin: 8px 0 12px;
+    letter-spacing: -0.8px;
+}
+
+.report-header p {
+    max-width: 600px;
+    margin-bottom: 0;
+    color: #9aacc8;
+    line-height: 1.8;
+}
+
+@media (max-width: 650px) {
+    .report-header {
+        padding: 22px 18px;
+    }
+}
+
+        
+
+        .report-label {
+            display: inline-block;
+            padding: 7px 12px;
+            border: 1px solid #294b82;
+            border-radius: 20px;
+            color: #8dbaff;
+            background: #142443;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .report-header h1 {
+            font-size: clamp(27px, 4vw, 38px);
+            margin: 5px 0 10px;
+        }
+
+        .report-header p,
+        .muted {
+            color: #9aacc8;
+            line-height: 1.7;
+        }
+
+        .report-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 18px;
+    margin-bottom: 18px;
+}
+
+.report-grid .report-card {
+    padding: 22px;
+}
+
+.report-grid .main-score {
+    font-size: 36px;
+    margin: 5px 0 0;
+}
+
+.report-grid .report-card p {
+    margin-bottom: 10px;
+}
+
+.report-grid .score-row {
+    margin-top: 16px;
+}
+        
+
+        .report-card {
+            min-width: 0;
+            padding: 24px;
+            border: 1px solid #303f59;
+            border-radius: 16px;
+            background: #172338;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .report-card h2 {
+            font-size: 19px;
+            margin: 0 0 10px;
+        }
+
+        .prediction-status {
+            display: inline-block;
+            margin: 12px 0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .phishing-status {
+            color: #ff9b9b;
+            background: #3a202c;
+            border: 1px solid #713442;
+        }
+
+        .legitimate-status {
+            color: #76e0b0;
+            background: #15382f;
+            border: 1px solid #28654f;
+        }
+
+        .main-score {
+            font-size: clamp(34px, 5vw, 46px);
+            font-weight: 750;
+            margin: 8px 0;
+            color: #f3f6ff;
+        }
+
+        .score-row {
+            margin-top: 20px;
+        }
+
+        .score-label {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+            color: #c5d1e6;
+            font-size: 14px;
+        }
+
+        .score-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #2a3850;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .phishing-fill {
+            background: #fb6474;
+        }
+
+        .legitimate-fill {
+            background: #36c99a;
+        }
+
+        .shap-card {
+            margin-top: 18px;
+        }
+
+        .shap-intro {
+            margin: 0 0 24px;
+            font-size: 14px;
+            color: #9aacc8;
+            line-height: 1.7;
+        }
+
+        .shap-row {
+            display: grid;
+            grid-template-columns: minmax(85px, 145px) minmax(0, 1fr) 76px;
+            align-items: center;
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .shap-word {
+            color: #e8eefb;
+            font-weight: 600;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+        }
+
+        .shap-track {
+            height: 12px;
+            background: #26344b;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .shap-bar {
+            height: 100%;
+            border-radius: 5px;
+        }
+
+        .shap-positive {
+            background: #fb6474;
+        }
+
+        .shap-negative {
+            background: #43bce8;
+        }
+
+        .shap-value {
+            text-align: right;
+            font-size: 13px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .positive-text {
+            color: #ff8d9a;
+        }
+
+        .negative-text {
+            color: #72d2f2;
+        }
+
+        .shap-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 22px 0 8px;
+            font-size: 13px;
+            color: #aabbd4;
+        }
+
+        .legend-dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        .report-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .report-actions a {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-weight: 650;
+        }
+
+        .primary-action {
+            background: #3478f6;
+            color: white;
+        }
+
+        .secondary-action {
+            border: 1px solid #394c69;
+            color: #d9e6fb;
+        }
+
+        .report-note {
+            margin-top: 20px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            background: #131e31;
+            color: #a9bad3;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 650px) {
+            .email-report {
+                width: calc(100% - 24px);
+                margin-top: 25px;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-card {
+                padding: 19px;
+            }
+
+            .shap-row {
+                grid-template-columns: minmax(75px, 105px) minmax(0, 1fr) 65px;
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .shap-row {
+                grid-template-columns: 80px minmax(0, 1fr) 58px;
+                gap: 6px;
+            }
+
+            .shap-word,
+            .shap-value {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="container navbar">
+        <div class="logo">🛡️ PhishGuard</div>
+        <div>AI-Based Security</div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeButton">
+            ☀️ Light
+        </button>
+    </div>
+</header>
+
+<main class="email-report">
+
+    <section class="report-header">
+        <div class="report-label">📡 EMAIL THREAT ANALYSIS</div>
+        <h1>Security Report</h1>
+        <p>
+            AI-powered email classification with explainable
+            machine learning.
+        </p>
+    </section>
+
+    <section class="report-grid">
+
+        <div class="report-card">
+            <h2>Detection Result</h2>
+
+            {% if result.prediction == "Phishing" %}
+                <div class="prediction-status phishing-status">
+                    ⚠ POTENTIAL PHISHING
+                </div>
+                <p class="muted">
+                    The model identified patterns associated with
+                    phishing. Verify the sender independently.
+                </p>
+            {% else %}
+                <div class="prediction-status legitimate-status">
+                    ✓ CLASSIFIED AS LEGITIMATE
+                </div>
+                <p class="muted">
+                    The model did not classify this message as phishing.
+                    This does not guarantee that it is safe.
+                </p>
+            {% endif %}
+
+            <div class="muted">Model prediction</div>
+            <div class="main-score">{{ result.prediction }}</div>
+        </div>
+
+        <div class="report-card">
+            <h2>Risk Score Overview</h2>
+            <p class="muted">
+                Model-estimated scores for this email.
+            </p>
+
+            <div class="score-row">
+                <div class="score-label">
+                    <span>Phishing</span>
+                    <strong>{{ result.phishing_probability }}%</strong>
+                </div>
+                <div class="score-track">
+                    <div class="score-fill phishing-fill"
+                         style="width: {{ result.phishing_probability }}%">
+                    </div>
+                </div>
+            </div>
+
+            <div class="score-row">
+                <div class="score-label">
+                    <span>Legitimate</span>
+                    <strong>{{ result.legitimate_probability }}%</strong>
+                </div>
+                <div class="score-track">
+                    <div class="score-fill legitimate-fill"
+                         style="width: {{ result.legitimate_probability }}%">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="report-card shap-card">
+        <h2>🔎 Explainable AI</h2>
+        <p class="shap-intro">
+            SHAP shows how words and phrases influenced the model's
+            output. Longer bars indicate larger contributions in
+            magnitude; they do not prove that a word is malicious.
+        </p>
+
+        {% if result.explanations %}
+            {% set max_value = result.explanations | map(attribute='value') | map('abs') | max %}
+
+            {% for item in result.explanations %}
+                <div class="shap-row">
+                    <div class="shap-word">{{ item.word }}</div>
+
+                    <div class="shap-track">
+                        <div
+                            class="shap-bar {% if item.value >= 0 %}shap-positive{% else %}shap-negative{% endif %}"
+                            style="width: {{ (item.value | abs / max_value * 100) if max_value else 0 }}%">
+                        </div>
+                    </div>
+
+                    <div class="shap-value {% if item.value >= 0 %}positive-text{% else %}negative-text{% endif %}">
+                        {{ "%+.3f"|format(item.value) }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="muted">No word contributions are available.</p>
+        {% endif %}
+
+        <div class="shap-legend">
+            <span>
+                <span class="legend-dot" style="background:#fb6474"></span>
+                Pushes toward phishing
+            </span>
+            <span>
+                <span class="legend-dot" style="background:#43bce8"></span>
+                Pushes toward legitimate
+            </span>
+        </div>
+
+        <div class="report-note">
+            <strong>Security reminder:</strong>
+            These are model-generated estimates, not guarantees.
+            Do not open suspicious links or provide sensitive details
+            based only on this result.
+        </div>
+    </section>
+
+    <div class="report-actions">
+    <a class="primary-action" href="/">← Back to PhishGuard</a>
+    <a class="secondary-action" href="/?scanner=email">Analyze Another Email</a>
+</div>
+</main>
+
+<footer>
+    <p>© 2026 PhishGuard | AI-Based Phishing Detection</p>
+</footer>
+
+<script>
+    function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        updateThemeButton();
+    }
+
+    function updateThemeButton() {
+        const button = document.getElementById("themeButton");
+
+        button.textContent =
+            document.body.classList.contains("dark-mode")
+            ? "☀️ Light"
+            : "🌙 Dark";
+    }
+
+    window.addEventListener("DOMContentLoaded", function () {
+        if (localStorage.getItem("theme") === "dark") {
+            document.body.classList.add("dark-mode");
+        }
+
+        updateThemeButton();
+    });
+</script>
+
+</body>
+</html>

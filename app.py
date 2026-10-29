@@ -4,6 +4,7 @@ import pandas as pd
 
 from features.url_features import extract_basic_features
 from urllib.parse import urlparse
+from email_detector import analyze_email
 print("All imports completed")
 
 app = Flask(__name__)
@@ -155,6 +156,29 @@ def scan():
         reasons=reasons
     )
 
+
+@app.route("/scan-email", methods=["POST"])
+def scan_email():
+    email = request.form.get("email", "").strip()
+
+    if not email:
+        return render_template(
+            "index.html",
+            email_error="Please paste an email message to analyze."
+        )
+
+    try:
+        result = analyze_email(email)
+    except ValueError as error:
+        return render_template(
+            "index.html",
+            email_error=str(error)
+        )
+
+    return render_template(
+        "email_result.html",
+        result=result
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
