@@ -1,13 +1,13 @@
-🛡️ PhishGuard – AI-Based Phishing Website and Email Detection System
+# 🛡️ PhishGuard – AI-Based Phishing Website and Email Detection System
 
 PhishGuard is an AI-based phishing detection system designed to identify malicious URLs and phishing emails using Machine Learning and Natural Language Processing techniques. It also uses SHAP explainability to help users understand the factors influencing email detection results.
 
-🌐 Live Demo
+## 🌐 Live Demo
 
-Try PhishGuard here:
+**Try PhishGuard here:**  
 https://phishguard-ko3g.onrender.com/
 
-✨ Key Features
+## ✨ Key Features
 
 - **URL Phishing Detection:** Identifies suspicious and legitimate URLs using a Random Forest classifier.
 - **Email Phishing Detection:** Classifies email content using TF-IDF and Logistic Regression.
@@ -16,10 +16,10 @@ https://phishguard-ko3g.onrender.com/
 - **User-Friendly Interface:** Simple and responsive web interface.
 - **Light and Dark Themes:** Provides theme options for a better user experience.
 
-🧠 Technologies Used
+## 🧠 Technologies Used
 
 | Category | Technologies |
-
+|---|---|
 | Programming Language | Python |
 | Machine Learning | Scikit-learn |
 | URL Detection | Random Forest |
@@ -32,7 +32,7 @@ https://phishguard-ko3g.onrender.com/
 | Deployment | Render |
 | Version Control | Git and GitHub |
 
-⚙️ System Modules
+## ⚙️ System Modules
 
 ### 1. URL Phishing Detection
 The system extracts URL-based features and uses a trained Random Forest model to classify URLs as phishing or legitimate.
@@ -46,7 +46,7 @@ SHAP is integrated into the email detection module to identify words and phrases
 ### 4. Risk Analysis
 The application displays prediction results, risk probabilities, and security recommendations to help users understand potential threats.
 
-🔄 System Workflow
+## 🔄 System Workflow
 
 1. The user enters a URL or email content.
 2. The system processes the submitted input.
@@ -110,9 +110,9 @@ Visit:
 http://127.0.0.1:5000/
 ```
 
+*Note: Ensure that the required trained model files and dependencies are available before running the application.*
 
-
-📊 Machine Learning Models
+## 📊 Machine Learning Models
 
 | Module | Algorithm | Purpose |
 |---|---|---|
@@ -120,18 +120,18 @@ http://127.0.0.1:5000/
 | Email Detection | Logistic Regression | Classifies phishing emails |
 | Email Explainability | SHAP | Explains influential words and phrases |
 
-👥 Team Members
+## 👥 Team Members
 
-1. JESNA SEMREEN PALLIYALI
-2. FATHIMA FIDHA CM
-3. LEKHA SHREE V
-4. JISHNU DEV AS
+1. **JESNA SEMREEN** 
+2. **FATHIMA FIDHA CM**
+3. **LEKHA SHREE V**
+4. **JISHNU DEV AS**
 
-🎯 Project Objective
+## 🎯 Project Objective
 
 The main objective of PhishGuard is to develop an accessible AI-based solution that helps users identify potential phishing websites and emails, understand associated risks, and improve awareness of online security threats.
 
-🚀 Future Enhancements
+## 🚀 Future Enhancements
 
 - Real-time phishing URL intelligence integration.
 - Browser extension for instant URL checking.
@@ -139,11 +139,11 @@ The main objective of PhishGuard is to develop an accessible AI-based solution t
 - Enhanced email analysis and explainability.
 - Support for additional languages.
 
-⚠️ Disclaimer
+## ⚠️ Disclaimer
 
 PhishGuard is an educational project developed for phishing detection and awareness. Its predictions are based on trained machine learning models and should not be considered a guarantee that a website or email is safe.
 
-📌 Repository
+## 📌 Repository
 
 GitHub: https://github.com/JesnaSemreen/PhishGuard
 
